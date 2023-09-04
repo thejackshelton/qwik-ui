@@ -116,6 +116,7 @@
     "components library"
   ],
   "dependencies": {
+    "gray-matter": "4.0.3",
     "tslib": "^2.6.2"
   }
 }
