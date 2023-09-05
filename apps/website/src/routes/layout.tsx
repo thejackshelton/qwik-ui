@@ -1,6 +1,5 @@
 import { Slot, component$, useSignal, useStyles$, useTask$ } from '@builder.io/qwik';
 import { ContentMenu, useContent, useLocation } from '@builder.io/qwik-city';
-import { loadComponent } from 'apps/website/utils/mdx-reader';
 import { QwikUIProvider } from '@qwik-ui/headless';
 import { ComponentsStatusesMap, statusByComponent } from '../_state/component-statuses';
 import { KitName } from '../_state/kit-name.type';
@@ -14,55 +13,20 @@ import {
 } from './docs/_components/navigation-docs/navigation-docs';
 import { useSelectedKit } from './docs/use-selected-kit';
 import prismStyles from './prism.css?inline';
-
+// import stuff from './docs/headless/(components)/accordion/index.mdx';
 export default component$(() => {
-  const store = useSignal<any>([]);
+  const { headings } = useContent();
+  const contentHeadings = headings?.filter((h) => h.level <= 3 && h.level >= 2) || [];
   const comp = useSignal<any>('');
   const loc: any = useLocation();
+
   useTask$(async () => {
     const parts = loc.url.pathname.split('/');
     parts.pop();
     const lastPart = parts.pop();
-    console.log(lastPart);
+
     comp.value = lastPart;
-    try {
-      const { frontmatter }: any = await loadComponent(lastPart);
-      store.value = { ...frontmatter.links };
-    } catch (error) {
-      return;
-    }
   });
-
-  function renderTitlesWithMargin(obj: any, marginLeft = 0) {
-    const textStyle = `ml-${marginLeft}`;
-    console.log(typeof obj.title, obj.title);
-
-    return (
-      <li key={obj.title} class={textStyle}>
-        <a
-          href={`${loc.url.href}#${
-            typeof obj.title === 'string'
-              ? obj.title
-                  .toLowerCase()
-                  .replaceAll(' ', '-')
-                  .replaceAll(/[\uD800-\uDFFF]./g, '')
-              : ''
-          }`}
-        >
-          {obj.title}
-        </a>
-        {obj.items && (
-          <ul>
-            {obj.items.map((item: any) => (
-              <li key={item.title} class={textStyle}>
-                {renderTitlesWithMargin(item, marginLeft + 1)}
-              </li>
-            ))}
-          </ul>
-        )}
-      </li>
-    );
-  }
 
   useStyles$(prismStyles);
   useStyles$(docsStyles);
@@ -86,7 +50,22 @@ export default component$(() => {
                 <span class="capitalize">{comp.value}</span>
                 <span class="hue-rotate-[210deg]">⚡</span>
               </a>
-              ​<ul class="flex flex-col gap-2">{renderTitlesWithMargin(store.value)}</ul>
+              {contentHeadings.length > 0 ? (
+                <>
+                  <ul class="px-2 flex flex-col font-medium gap-1">
+                    {contentHeadings.map((h) => (
+                      <a href={`#${h.id}`} class={`${h.level > 2 ? 'ml-4' : null}`}>
+                        <li
+                          key={h.id}
+                          class="hover:bg-slate-400 hover:font-extrabold transition-[font-weight] hover:bg-opacity-40  ease-in px-2 py-1 rounded-md"
+                        >
+                          {h.text}
+                        </li>
+                      </a>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
             </div>
           </div>
         </div>
