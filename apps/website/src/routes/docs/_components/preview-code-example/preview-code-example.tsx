@@ -20,10 +20,10 @@ export const PreviewCodeExample = component$(({ ...props }) => {
       selectedClassName="previewCodeExampleSelectedTab"
     >
       <TabList class="text-white flex rounded-t-xl bg-qwikui-blue-700 dark:bg-qwikui-purple-800 border-qwikui-blue-300 dark:border-qwikui-purple-200 border-[1.5px] border-b-0 shadow-light-medium dark:shadow-dark-medium">
-        <Tab class="px-4 py-2 rounded-tl-[.625rem] hover:bg-qwikui-blue-500 dark:hover:bg-qwikui-purple-600">
+        <Tab class="px-4 py-2 rounded-tl-[.625rem] hover:bg-qwikui-blue-500 dark:hover:bg-qwikui-purple-600 text-outline-lg">
           Preview
         </Tab>
-        <Tab class="px-4 py-2 hover:bg-qwikui-blue-500 dark:hover:bg-qwikui-purple-600">
+        <Tab class="px-4 py-2 hover:bg-qwikui-blue-500 dark:hover:bg-qwikui-purple-600 text-outline-lg">
           Code
         </Tab>
       </TabList>

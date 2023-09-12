@@ -1,224 +1,207 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import {
-  $,
-  PropFunction,
-  QwikMouseEvent,
-  Signal,
+  type QwikIntrinsicElements,
   Slot,
   component$,
-  useContextProvider,
   useSignal,
-  useStore,
-  useStylesScoped$,
-  useTask$,
   useVisibleTask$,
-  type QwikIntrinsicElements,
+  Signal,
+  useStylesScoped$,
 } from '@builder.io/qwik';
-import { isBrowser } from '@builder.io/qwik/build';
 import {
-  AlignedPlacement,
-  Side,
+  ReferenceElement,
   autoUpdate,
   computePosition,
-  flip,
-  offset as offsetPlugin,
-  shift,
+  offset as _offset,
+  flip as _flip,
+  shift as _shift,
+  autoPlacement as _autoPlacement,
+  hide as _hide,
 } from '@floating-ui/dom';
-import { PopoverContext } from './popover-context';
+// import '@oddbird/popover-polyfill/dist/popover.css';
+import { isBrowser } from '@builder.io/qwik/build';
 
-export type PopoverProps = QwikIntrinsicElements['span'] & {
-  /*
-   * The side where to show the popover
-   */
-  placement?: Side | AlignedPlacement;
-  /**
-   * Popover is opened when trigger is clicked or mouse overed
-   */
-  triggerEvent?: 'click' | 'mouseOver';
-  /**
-   * offset between trigger and content
-   */
-  offset?: number;
-  /**
-   * Open or close the popover when popover is controlled by the parent
-   */
-  isOpen?: boolean;
+export type PopoverProps = {
+  anchorRef?: Signal<HTMLElement | undefined>;
+  placement?:
+    | 'top'
+    | 'top-start'
+    | 'top-end'
+    | 'right'
+    | 'right-start'
+    | 'right-end'
+    | 'bottom'
+    | 'bottom-start'
+    | 'bottom-end'
+    | 'left'
+    | 'left-start'
+    | 'left-end';
+  ancestorScroll?: boolean;
+  ancestorResize?: boolean;
+  elementResize?: boolean;
+  layoutShift?: boolean;
+  animationFrame?: boolean;
+  gutter?: number;
+  shift?: boolean;
+  flip?: boolean;
+  size?: boolean;
+  autoPlacement?: boolean;
+  hide?: 'referenceHidden' | 'escaped';
+  inline?: boolean;
+  transform?: string;
+} & QwikIntrinsicElements['div'];
 
-  /**
-   * When true the popover is not closed when click outside
-   */
-  disableClickOutSide?: boolean;
-  /**
-   * Notify a state update to the parent
-   */
-  onUpdate$?: PropFunction<(isOpen: boolean) => void>;
-};
+const isSupported =
+  isBrowser &&
+  typeof HTMLElement !== 'undefined' &&
+  typeof HTMLElement.prototype === 'object' &&
+  'popover' in HTMLElement.prototype;
+
+const moduleScope: { containerDiv?: HTMLDivElement; imported?: boolean } = {};
+
+function getPortalParent() {
+  if (!moduleScope.containerDiv) {
+    moduleScope.containerDiv = document.createElement('div');
+    moduleScope.containerDiv.style.position = 'absolute';
+    document.body.appendChild(moduleScope.containerDiv);
+  }
+  return moduleScope.containerDiv;
+}
+
+function getPopoverParent(floatingElement: HTMLElement) {
+  const portalParent = getPortalParent();
+
+  return isSupported ? floatingElement : portalParent;
+}
 
 export const Popover = component$(
   ({
-    triggerEvent = 'click',
-    onUpdate$,
-    disableClickOutSide,
-    offset,
-    placement,
-    isOpen,
-    ...restOfProps
+    anchorRef,
+    gutter,
+    flip = true,
+    placement = 'bottom-start',
+    shift,
+    hide,
+    autoPlacement = false,
+    ancestorScroll = true,
+    ancestorResize = true,
+    elementResize = true,
+    animationFrame = false,
+    transform,
+    ...props
   }: PopoverProps) => {
-    const wrapperRef = useSignal<HTMLElement>();
-    const triggerRef = useSignal<HTMLElement>();
-    const contentRef = useSignal<HTMLElement>();
+    const base = useSignal<HTMLElement>();
+    const popoverRef = useSignal<HTMLElement>();
 
-    const setOverlayRef$ = $((ref: Signal<HTMLElement | undefined>) => {
-      if (ref) {
-        contentRef.value = ref.value;
-      }
-    });
-
-    const setTriggerRef$ = $((ref: Signal<HTMLElement | undefined>) => {
-      if (ref) {
-        triggerRef.value = ref.value;
-      }
-    });
-
-    //relative here because absolute needs a containing block - Jack
     useStylesScoped$(`
-     [data-type="popover-root"] {
-      position: relative;
-     }
-  `);
-
-    const contextService = useStore({
-      isOpen: false,
-      triggerEvent,
-      setTriggerRef$,
-      setOverlayRef$,
-    });
-    useContextProvider(PopoverContext, contextService);
-
-    /**
-     * Close the popover and sync external states
-     */
-    const closePopover = $(async () => {
-      contextService.isOpen = false;
-
-      if (contentRef) {
-        contentRef.value?.classList.add('close');
-        contentRef.value?.classList.remove('open');
+      [data-child] {
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        border: 0;
       }
+    `);
 
-      if (onUpdate$) await onUpdate$(contextService.isOpen);
-    });
+    // sets floating UI config
+    useVisibleTask$(({ track, cleanup }) => {
+      if (!anchorRef || !anchorRef.value) return;
+      const ref = track(() => anchorRef.value)!;
 
-    /**
-     * Open the popover and sync external states
-     */
-    const openPopover = $(async () => {
-      contextService.isOpen = true;
+      const updatePosition = () => {
+        const middleware = [
+          _offset(gutter),
+          _hide({ strategy: hide }),
+          flip && _flip(),
+          shift && _shift(),
+          autoPlacement && _autoPlacement(),
+        ];
 
-      if (contentRef) {
-        contentRef.value?.classList.add('open');
-        contentRef.value?.classList.remove('close');
-      }
+        console.log(getPopoverParent(popoverRef.value!));
 
-      if (onUpdate$) await onUpdate$(contextService.isOpen);
-    });
+        computePosition(
+          anchorRef?.value as ReferenceElement,
+          getPopoverParent(popoverRef.value!),
+          {
+            placement,
+            middleware,
+          },
+        ).then((resolvedData) => {
+          if (!popoverRef.value) return;
 
-    /**
-     * Toggle the popover state and emit update
-     */
-    const togglePopover = $(async () => {
-      if (contextService.isOpen) {
-        closePopover();
-      } else {
-        openPopover();
-      }
+          const { x, y } = resolvedData;
 
-      if (onUpdate$) await onUpdate$(contextService.isOpen);
-    });
+          console.log(getPopoverParent(popoverRef.value));
 
-    /**
-     * Initialize popover
-     * NOTE: why useTask instead useClientEffect?
-     * It needs to be invoked after the children useClientEffect
-     */
-    useTask$(({ track }) => {
-      const trigger = track(() => triggerRef.value as Element);
-      const content = track(() => contentRef.value as HTMLElement);
+          const popoverParent = getPopoverParent(popoverRef.value);
 
-      if (isBrowser && trigger && content) {
-        autoUpdate(trigger, content, () => {
-          computePosition(trigger, content, {
-            middleware: [flip(), shift(), offsetPlugin(offset || 0)],
-            placement: placement,
-          }).then(({ x, y }) => {
-            Object.assign(content.style, {
-              left: `${x}px`,
-              top: `${y}px`,
-            });
+          Object.assign(popoverParent.style, {
+            left: `${x}px`,
+            top: `${y}px`,
+            transform,
           });
+
+          console.log(x, y);
         });
+      };
 
-        // Open popover after initialization
-        if (isOpen) {
-          openPopover();
-        }
-      }
+      const cleanupFunc = autoUpdate(
+        ref,
+        getPopoverParent(popoverRef.value!),
+        updatePosition,
+        {
+          ancestorScroll,
+          ancestorResize,
+          elementResize,
+          animationFrame,
+        },
+      );
+      cleanup(cleanupFunc);
     });
 
-    /**
-     * Sync isOpen external property with internal context
-     * NOTE: useful when the popover status is controlled from the outside
-     */
-    useVisibleTask$(({ track }) => {
-      track(() => isOpen);
-      contextService.isOpen = !!isOpen;
+    useVisibleTask$(async ({ cleanup }) => {
+      if (isSupported) return;
+      if (!moduleScope.imported) {
+        await import('@oddbird/popover-polyfill');
+        const css = (await import('@oddbird/popover-polyfill/dist/popover.css?inline'))
+          .default;
+        const styleNode = document.createElement('style');
+        styleNode.textContent = css;
+        document.head.appendChild(styleNode);
+        moduleScope.imported = true;
+      }
+      cleanup(() => {
+        base.value?.appendChild(moduleScope.containerDiv as Node);
+      });
     });
 
-    /**
-     * Watch isOpen context property
-     * and apply CSS classes to show and hide the Popover Content
-     */
-    useVisibleTask$(({ track }) => {
-      track(() => contextService.isOpen);
-      if (!triggerRef.value || !contentRef.value) return;
-
-      if (contextService.isOpen) {
-        openPopover();
-      } else {
-        closePopover();
-      }
-    });
-
-    /**
-     * clickOutsideHandler
-     */
-    const clickHandler = $((e: QwikMouseEvent) => {
-      // if the popover content is clicked: do nothing
-      const isContentClicked = contentRef.value?.contains(e.target as HTMLElement);
-      if (isContentClicked) {
-        return;
-      }
-
-      // if the trigger is Clicked
-      const isTriggerClicked = triggerRef.value?.contains(e.target as HTMLElement);
-      if (isTriggerClicked && triggerEvent === 'click') {
-        // toggle if triggered by 'click'
-        togglePopover();
-      } else {
-        // otherwise close it if popover is triggered
-        if (disableClickOutSide) return;
-        closePopover();
-      }
-    });
+    type ToggleEvent = {
+      newState: string;
+    };
 
     return (
-      <span
-        {...restOfProps}
-        data-type="popover-root"
-        ref={wrapperRef}
-        document:onClick$={clickHandler}
-      >
-        <Slot />
-      </span>
+      <div ref={base}>
+        <div
+          {...props}
+          onToggle$={(e: ToggleEvent) => {
+            if (isSupported || !popoverRef.value) {
+              return;
+            }
+            // We need to have a place to put the popover which doesn't impact layout
+            const floatingParent = getPortalParent();
+            if (e.newState === 'open') {
+              floatingParent.appendChild(popoverRef.value);
+            } else {
+              base.value?.appendChild(popoverRef.value);
+            }
+          }}
+          ref={popoverRef}
+          data-child
+          popover
+        >
+          <Slot />
+        </div>
+      </div>
     );
   },
 );

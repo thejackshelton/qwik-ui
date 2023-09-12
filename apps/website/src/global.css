@@ -153,9 +153,9 @@ ol {
   }
 
   .dark .text-outline-lg {
-    text-shadow: 1.2px 1.2px 0 var(--qwikui-purple-800),
-      -0.6px -0.6px 0 var(--qwikui-purple-800), 0.6px -0.6px 0 var(--qwikui-purple-800),
-      -0.6px 0.6px 0 var(--qwikui-purple-800), 0.6px 0.6px 0 var(--qwikui-purple-800);
+    text-shadow: 1.2px 1.2px 0 var(--qwikui-purple-900),
+      -0.6px -0.6px 0 var(--qwikui-purple-900), 0.6px -0.6px 0 var(--qwikui-purple-900),
+      -0.6px 0.6px 0 var(--qwikui-purple-900), 0.6px 0.6px 0 var(--qwikui-purple-900);
   }
 
   .text-outline-beta {

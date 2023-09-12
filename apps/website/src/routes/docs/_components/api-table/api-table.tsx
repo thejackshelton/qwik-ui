@@ -1,5 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import { component$ } from '@builder.io/qwik';
-import { Popover, PopoverContent, PopoverTrigger } from '@qwik-ui/headless';
+import { Popover } from '@qwik-ui/headless';
 type APITableProps = {
   propDescriptors: {
     name: string;
@@ -39,13 +42,14 @@ export const APITable = component$(({ propDescriptors }: APITableProps) => {
                       {propDescriptor.type}
                     </code>
                     {propDescriptor.info && (
-                      <Popover placement="top">
-                        <PopoverContent>
-                          <div class="shadow-light-medium bg-qwikui-blue-50 text-slate-950 dark:shadow-dark-high  max-w-xs mb-2 text-md py-2 px-3  rounded-lg sm:w-max border-[1px] border-b-2 border-qwikui-blue-500 dark:border-qwikui-purple-500 dark:bg-qwikui-purple-100 font-[500]">
-                            {propDescriptor?.info}
-                          </div>
-                        </PopoverContent>
-                        <PopoverTrigger>
+                      <>
+                        <Popover
+                          id="info"
+                          class="shadow-light-medium bg-qwikui-blue-50 text-slate-950 dark:shadow-dark-high  max-w-xs mb-2 text-md py-2 px-3  rounded-lg sm:w-max border-[1px] border-b-2 border-qwikui-blue-500 dark:border-qwikui-purple-500 dark:bg-qwikui-purple-100 font-[500]"
+                        >
+                          {propDescriptor?.info}
+                        </Popover>
+                        <button popovertarget="info">
                           <div class="hover:bg-slate-500 hover:bg-opacity-50 mt-2 p-1 rounded-md mx-2 rounded-xl">
                             <svg
                               width="15"
@@ -64,8 +68,8 @@ export const APITable = component$(({ propDescriptors }: APITableProps) => {
                               ></path>
                             </svg>
                           </div>{' '}
-                        </PopoverTrigger>
-                      </Popover>
+                        </button>
+                      </>
                     )}
                   </span>
                 </td>

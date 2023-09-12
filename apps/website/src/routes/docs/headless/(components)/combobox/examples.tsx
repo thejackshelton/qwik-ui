@@ -11,7 +11,6 @@ import {
   ComboboxInput,
   ComboboxLabel,
   ComboboxListbox,
-  ComboboxPortal,
   ComboboxTrigger,
   ComboboxIcon,
   ComboboxOption,
@@ -45,11 +44,14 @@ export const HeroExample = component$(() => {
     disabled: boolean;
   };
 
+  const inputRef = useSignal<HTMLInputElement>();
+
   return (
     <>
       <PreviewCodeExample>
         <div class="flex flex-col gap-4" q:slot="actualComponent">
           <Combobox
+            bind:inputRef={inputRef}
             options={objectExample}
             optionValueKey="testValue"
             optionLabelKey="testLabel"
@@ -68,27 +70,24 @@ export const HeroExample = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                gutter={8}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                optionRenderer$={(option: ResolvedOption, index: number) => {
-                  const myData = option.option as MyData;
-                  return (
-                    <ComboboxOption
-                      key={option.key}
-                      resolved={option}
-                      index={index}
-                      class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    >
-                      <span class="block group-aria-selected:translate-x-[3px] transition-transform duration-350">
-                        {myData.testLabel}
-                      </span>
-                    </ComboboxOption>
-                  );
-                }}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              optionRenderer$={(option: ResolvedOption, index: number) => {
+                const myData = option.option as MyData;
+                return (
+                  <ComboboxOption
+                    key={option.key}
+                    resolved={option}
+                    index={index}
+                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  >
+                    <span class="block group-aria-selected:translate-x-[3px] transition-transform duration-350">
+                      {myData.testLabel}
+                    </span>
+                  </ComboboxOption>
+                );
+              }}
+            />
           </Combobox>
         </div>
 
@@ -141,22 +140,20 @@ export const StringCombobox = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                gutter={8}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              gutter={8}
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -193,22 +190,20 @@ export const ObjectCombobox = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                gutter={8}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              gutter={8}
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -257,23 +252,21 @@ export const CustomFilter = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                flip={true}
-                gutter={8}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              flip={true}
+              gutter={8}
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -326,23 +319,21 @@ export const SortingExample = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                flip={true}
-                gutter={8}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              flip={true}
+              gutter={8}
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -388,23 +379,21 @@ export const DisabledExample = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                flip={true}
-                gutter={8}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              flip={true}
+              gutter={8}
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -463,35 +452,33 @@ export const CustomKeysExample = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                flip={true}
-                gutter={8}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                optionRenderer$={(option: ResolvedOption, index: number) => {
-                  const pokemonOption = option.option as Pokemon;
-                  return (
-                    <ComboboxOption
-                      key={option.key}
-                      class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group flex justify-between"
-                      index={index}
-                      resolved={option}
-                      onMouseEnter$={() => {
-                        if (option.disabled === true) {
-                          isPokemonCaught.value = true;
-                        }
-                      }}
-                      onMouseLeave$={() => {
-                        isPokemonCaught.value = false;
-                      }}
-                    >
-                      <span>{pokemonOption.pokemon}</span>
-                      <span>{pokemonOption.pokedex}</span>
-                    </ComboboxOption>
-                  );
-                }}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              flip={true}
+              gutter={8}
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              optionRenderer$={(option: ResolvedOption, index: number) => {
+                const pokemonOption = option.option as Pokemon;
+                return (
+                  <ComboboxOption
+                    key={option.key}
+                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group flex justify-between"
+                    index={index}
+                    resolved={option}
+                    onMouseEnter$={() => {
+                      if (option.disabled === true) {
+                        isPokemonCaught.value = true;
+                      }
+                    }}
+                    onMouseLeave$={() => {
+                      isPokemonCaught.value = false;
+                    }}
+                  >
+                    <span>{pokemonOption.pokemon}</span>
+                    <span>{pokemonOption.pokedex}</span>
+                  </ComboboxOption>
+                );
+              }}
+            />
           </Combobox>
         </div>
       </div>
@@ -540,23 +527,21 @@ export const DisableBlur = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                gutter={8}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                hide="referenceHidden"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              gutter={8}
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              hide="referenceHidden"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -599,23 +584,21 @@ export const PlacementExample = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                gutter={8}
-                placement="top"
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              gutter={8}
+              placement="top"
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -656,23 +639,21 @@ export const FlipExample = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                flip={true}
-                gutter={8}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              flip={true}
+              gutter={8}
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -720,22 +701,20 @@ export const GutterExample = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                gutter={24}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              gutter={24}
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -785,23 +764,21 @@ export const HideExample = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                gutter={8}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                hide="escaped"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              gutter={8}
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              hide="escaped"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -861,24 +838,22 @@ export const AnimationExample = component$(() => {
                 </svg>
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                gutter={8}
-                class={`w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px] transition-opacity duration-[500ms] ${
-                  isListboxOpenSig.value ? 'opacity-100' : 'opacity-0'
-                }`}
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              gutter={8}
+              class={`w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px] transition-opacity duration-[500ms] ${
+                isListboxOpenSig.value ? 'opacity-100' : 'opacity-0'
+              }`}
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -921,23 +896,21 @@ export const CustomState = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                gutter={8}
-                class="w-fit bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                hide="escaped"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              gutter={8}
+              class="w-fit bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              hide="escaped"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -964,23 +937,21 @@ export const DefaultLabel = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                gutter={8}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                hide="escaped"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              gutter={8}
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              hide="escaped"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -1018,24 +989,22 @@ export const HighlightedExample = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                gutter={8}
-                size={true}
-                class="w-fit bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                hide="escaped"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              gutter={8}
+              size={true}
+              class="w-fit bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              hide="escaped"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
       </div>
@@ -1085,7 +1054,7 @@ export const HighlightedExample = component$(() => {
 //                 </svg>
 //               </ComboboxTrigger>
 //             </ComboboxControl>
-//             <ComboboxPortal>
+//
 //               <ComboboxListbox
 //                 optionRenderer$={(option: ResolvedOption, index: number) => (
 //                   <ComboboxOption
@@ -1099,7 +1068,7 @@ export const HighlightedExample = component$(() => {
 //                 )}
 //                 class="w-fit absolute left:0 top:0 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
 //               />
-//             </ComboboxPortal>
+//
 //           </Combobox>
 //         </div>
 //       </div>
@@ -1142,24 +1111,22 @@ export const ContextChild = component$(() => {
               <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
             </ComboboxTrigger>
           </ComboboxControl>
-          <ComboboxPortal>
-            <ComboboxListbox
-              flip={true}
-              gutter={8}
-              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-              optionRenderer$={(option: ResolvedOption, index: number) => (
-                <ComboboxOption
-                  index={index}
-                  resolved={option}
-                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                >
-                  <span class="block group-aria-selected:translate-x-[3px] transition-transform duration-350">
-                    <span>{option.label}</span>
-                  </span>
-                </ComboboxOption>
-              )}
-            />
-          </ComboboxPortal>
+          <ComboboxListbox
+            flip={true}
+            gutter={8}
+            class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+            optionRenderer$={(option: ResolvedOption, index: number) => (
+              <ComboboxOption
+                index={index}
+                resolved={option}
+                class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+              >
+                <span class="block group-aria-selected:translate-x-[3px] transition-transform duration-350">
+                  <span>{option.label}</span>
+                </span>
+              </ComboboxOption>
+            )}
+          />
         </Combobox>
       </div>
 
@@ -1174,6 +1141,7 @@ export const SearchBar = component$(() => {
   const inputValueSig = useSignal('');
   const highlightedIndexSig = useSignal(0);
   const isListboxOpenSig = useSignal(false);
+  const inputRef = useSignal<HTMLInputElement>();
 
   type MyComponents = {
     component: string;
@@ -1200,6 +1168,7 @@ export const SearchBar = component$(() => {
             bind:inputValueSig={inputValueSig}
             bind:highlightedIndexSig={highlightedIndexSig}
             bind:isListboxOpenSig={isListboxOpenSig}
+            bind:inputRef={inputRef}
             optionValueKey="component"
             class="w-fit"
             options={components}
@@ -1207,6 +1176,7 @@ export const SearchBar = component$(() => {
             <ComboboxLabel class="text-white">Qwik UI ⚡</ComboboxLabel>
             <ComboboxControl class="bg-[#1f2532] rounded-sm border-slate-400 border-[1px] relative">
               <ComboboxInput
+                id="my-input"
                 onClick$={() => (isListboxOpenSig.value = !isListboxOpenSig.value)}
                 class="pl-6 w-44 bg-slate-900 px-d2 pr-6 text-white placeholder:text-slate-500"
                 onKeyDown$={(e) => {
@@ -1226,6 +1196,11 @@ export const SearchBar = component$(() => {
                   aria-label="clear search"
                   onMouseDown$={() => {
                     inputValueSig.value = '';
+                    // setTimeout(() => inputRef.value?.focus(), 100);
+                    // inputRef.value?.focus();
+                    // const input = document.querySelector('#my-input') as HTMLElement;
+                    console.log(inputRef.value);
+                    inputRef.value?.focus();
                   }}
                   class="w-6 h-6 flex justify-center items-center absolute top-0 right-0"
                 >
@@ -1233,36 +1208,32 @@ export const SearchBar = component$(() => {
                 </button>
               )}
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                gutter={8}
-                class="w-44 bg-slate-900 px-1 py-2 rounded-sm border-slate-400 border-[1px]"
-                hide="escaped"
-                optionRenderer$={(option: ResolvedOption, index: number) => {
-                  const searchOption = option.option as MyComponents;
-                  return (
-                    <a
-                      href={`${docsPrefix}/${searchOption.component}`}
-                      aria-label={option.label}
+            <ComboboxListbox
+              gutter={8}
+              class="w-44 bg-slate-900 px-1 py-2 rounded-sm border-slate-400 border-[1px]"
+              hide="escaped"
+              optionRenderer$={(option: ResolvedOption, index: number) => {
+                const searchOption = option.option as MyComponents;
+                return (
+                  <a
+                    href={`${docsPrefix}/${searchOption.component}`}
+                    aria-label={option.label}
+                  >
+                    <ComboboxOption
+                      key={option.key}
+                      class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group flex justify-between items-start gap-4"
+                      index={index}
+                      resolved={option}
                     >
-                      <ComboboxOption
-                        key={option.key}
-                        class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group flex justify-between items-start gap-4"
-                        index={index}
-                        resolved={option}
-                      >
-                        <span>{searchOption.label}</span>
-                        <span class="scale-[0.9]">
-                          <StatusBadge
-                            status={statusByComponent.headless[option.label]}
-                          />
-                        </span>
-                      </ComboboxOption>
-                    </a>
-                  );
-                }}
-              />
-            </ComboboxPortal>
+                      <span>{searchOption.label}</span>
+                      <span class="scale-[0.9]">
+                        <StatusBadge status={statusByComponent.headless[option.label]} />
+                      </span>
+                    </ComboboxOption>
+                  </a>
+                );
+              }}
+            />
           </Combobox>
         </div>
       </div>
@@ -1346,24 +1317,22 @@ export const AutoPlacementExample = component$(() => {
                 <ComboboxIcon class="stroke-white group-aria-expanded:-rotate-180 transition-transform duration-[450ms]" />
               </ComboboxTrigger>
             </ComboboxControl>
-            <ComboboxPortal>
-              <ComboboxListbox
-                flip={false}
-                autoPlacement={true}
-                gutter={8}
-                class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
-                optionRenderer$={(option: ResolvedOption, index: number) => (
-                  <ComboboxOption
-                    key={option.key}
-                    class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
-                    index={index}
-                    resolved={option}
-                  >
-                    {option.label}
-                  </ComboboxOption>
-                )}
-              />
-            </ComboboxPortal>
+            <ComboboxListbox
+              flip={false}
+              autoPlacement={true}
+              gutter={8}
+              class="w-44 bg-slate-900 px-4 py-2 rounded-sm border-slate-400 border-[1px]"
+              optionRenderer$={(option: ResolvedOption, index: number) => (
+                <ComboboxOption
+                  key={option.key}
+                  class="aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-700 rounded-sm px-2 hover:bg-slate-500 aria-selected:bg-slate-500 text-white  border-2 border-transparent aria-selected:border-slate-200 group"
+                  index={index}
+                  resolved={option}
+                >
+                  {option.label}
+                </ComboboxOption>
+              )}
+            />
           </Combobox>
         </div>
         <div class="w-[calc(100%+200px)] h-[1px]"></div>

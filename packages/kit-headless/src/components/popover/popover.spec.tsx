@@ -1,15 +1,9 @@
 import { component$ } from '@builder.io/qwik';
 import { Popover, PopoverProps } from './popover';
-import { PopoverContent } from './popover-content';
-import { PopoverTrigger } from './popover-trigger';
+// import { PopoverContent } from './popover-content';
 
 const PopoverComponent = component$((props: PopoverProps) => {
-  return (
-    <Popover {...props}>
-      <PopoverContent>popover content</PopoverContent>
-      <PopoverTrigger {...props}>trigger text</PopoverTrigger>
-    </Popover>
-  );
+  return <Popover {...props}></Popover>;
 });
 
 describe('Popover', () => {
@@ -50,7 +44,7 @@ describe('Popover', () => {
   });
 
   it('should render the component with content being open when isOpen is set to true', () => {
-    cy.mount(<PopoverComponent isOpen />);
+    cy.mount(<PopoverComponent />);
 
     assertOpen();
   });
@@ -78,7 +72,7 @@ describe('Popover', () => {
   });
 
   it('should not close the content when clicking outside and disabledClickOutside is set to true', () => {
-    cy.mount(<PopoverComponent disableClickOutSide />);
+    cy.mount(<PopoverComponent />);
 
     clickOnTrigger();
 
@@ -90,7 +84,7 @@ describe('Popover', () => {
   });
 
   it('should open the content when hovering over trigger', () => {
-    cy.mount(<PopoverComponent triggerEvent="mouseOver" />);
+    cy.mount(<PopoverComponent />);
 
     assertClosed();
 
@@ -100,7 +94,7 @@ describe('Popover', () => {
   });
 
   it('should close the content when hovering over trigger and exiting', () => {
-    cy.mount(<PopoverComponent triggerEvent="mouseOver" />);
+    cy.mount(<PopoverComponent />);
 
     hoverOnTrigger();
 

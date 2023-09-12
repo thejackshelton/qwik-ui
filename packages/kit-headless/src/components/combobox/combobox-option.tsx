@@ -34,9 +34,11 @@ export const ComboboxOption = component$(
         return;
       }
 
-      (context.inputRef.value.value =
-        context.filteredOptionsSig.value[context.highlightedIndexSig.value]?.label),
-        (context.isListboxOpenSig.value = false);
+      context.isListboxOpenSig.value = false;
+      console.log(context.isListboxOpenSig.value);
+
+      context.inputRef.value.value =
+        context.filteredOptionsSig.value[context.highlightedIndexSig.value]?.label;
     });
 
     const optionRef = useSignal<HTMLLIElement>();
@@ -72,7 +74,7 @@ export const ComboboxOption = component$(
         {...liProps}
         id={optionId}
         ref={optionRef}
-        tabIndex={0}
+        tabIndex={-1}
         role="option"
         aria-selected={isHighlightedSig.value}
         aria-disabled={resolved.disabled}
