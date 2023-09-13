@@ -36,6 +36,17 @@ export const ComboboxInput = component$(
 
     const isDefaultLabelNeededSig = useSignal<boolean>(true);
 
+    const onInputBehavior$ = $((e: InputEvent) => {
+      context.isListboxOpenSig.value = true;
+
+      // Deselect the currently selected option
+      context.highlightedIndexSig.value = -1;
+
+      const inputElement = e.target as HTMLInputElement;
+
+      context.inputValueSig.value = inputElement.value;
+    });
+
     const onKeydownBehavior$ = $((e: QwikKeyboardEvent) => {
       if (e.key === 'ArrowDown') {
         if (context.isListboxOpenSig.value) {
@@ -155,16 +166,7 @@ export const ComboboxInput = component$(
         }
         aria-controls={listboxId}
         value={context.inputValueSig.value}
-        onInput$={(e: InputEvent) => {
-          context.isListboxOpenSig.value = true;
-
-          // Deselect the currently selected option
-          context.highlightedIndexSig.value = -1;
-
-          const inputElement = e.target as HTMLInputElement;
-
-          context.inputValueSig.value = inputElement.value;
-        }}
+        onInput$={[onInputBehavior$, props.onInput$]}
         onBlur$={() => {
           disableOnBlur ? null : (context.isListboxOpenSig.value = false);
         }}

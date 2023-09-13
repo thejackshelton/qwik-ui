@@ -122,15 +122,7 @@ export const StringCombobox = component$(() => {
     <PreviewCodeExample>
       <div class="flex flex-col items-center gap-4 p-4" q:slot="actualComponent">
         <div>
-          <Combobox
-            class="w-fit"
-            options={fruits}
-            filter$={(value: string, options) =>
-              options.filter(({ option }) => {
-                return option.toLowerCase().startsWith(value.toLowerCase());
-              })
-            }
-          >
+          <Combobox class="w-fit" options={fruits}>
             <ComboboxLabel class=" font-semibold text-white">Fruits 🍓</ComboboxLabel>
             <ComboboxControl class="relative flex items-center rounded-sm border-[1px] border-slate-400 bg-[#1f2532]">
               <ComboboxInput
@@ -1116,6 +1108,7 @@ export const HighlightedExample = component$(() => {
 import { createContextId, useContext, useContextProvider } from '@builder.io/qwik';
 import { statusByComponent } from 'apps/website/src/_state/component-statuses';
 import { StatusBadge } from '../../../_components/component-status-badge/component-status-badge';
+import { useComboboxSearch } from '.';
 
 // Create a context ID
 export const AnimalContext = createContextId<string[]>('animal-context');
@@ -1175,26 +1168,23 @@ export const SearchBar = component$(() => {
   const highlightedIndexSig = useSignal(0);
   const isListboxOpenSig = useSignal(false);
 
+  const comboboxSearchAction = useComboboxSearch();
+  const JSONStuff = JSON.stringify(comboboxSearchAction.value);
+
   type MyComponents = {
     component: string;
     label: string;
   };
 
   const docsPrefix = '/docs/headless';
-  const components = [
-    { component: 'accordion', label: 'Accordion' },
-    { component: 'combobox', label: 'Combobox' },
-    { component: 'popover', label: 'Popover' },
-    { component: 'select', label: 'Select' },
-    { component: 'separator', label: 'Separator' },
-    { component: 'tabs', label: 'Tabs' },
-    { component: 'toggle', label: 'Toggle' },
-    { component: 'tooltip', label: 'Tooltip' },
-  ];
 
   return (
     <PreviewCodeExample>
-      <div class="flex flex-col items-center gap-4 p-4" q:slot="actualComponent">
+      <div
+        class="flex flex-col items-center gap-4 p-4 text-white"
+        q:slot="actualComponent"
+      >
+        {JSON.stringify(comboboxSearchAction.value)}
         <div>
           <Combobox
             bind:inputValueSig={inputValueSig}
@@ -1202,17 +1192,23 @@ export const SearchBar = component$(() => {
             bind:isListboxOpenSig={isListboxOpenSig}
             optionValueKey="component"
             class="w-fit"
-            options={components}
+            options={JSONStuff}
+            disableFilter={true}
           >
             <ComboboxLabel class="text-white">Qwik UI ⚡</ComboboxLabel>
             <ComboboxControl class="relative rounded-sm border-[1px] border-slate-400 bg-[#1f2532]">
               <ComboboxInput
                 onClick$={() => (isListboxOpenSig.value = !isListboxOpenSig.value)}
                 class="px-d2 w-44 bg-slate-900 pl-6 pr-6 text-white placeholder:text-slate-500"
-                onKeyDown$={(e) => {
+                onKeyDown$={async (e) => {
+                  const inputElement = e.target as HTMLInputElement;
                   if (e.key === 'Enter') {
-                    const inputElement = e.target as HTMLInputElement;
                     window.location.href = `${docsPrefix}/${inputElement.value.toLowerCase()}`;
+                  } else {
+                    // console.log(
+                    //   await comboboxSearchAction.submit({ q: inputElement.value }),
+                    // );
+                    await comboboxSearchAction.submit({ q: inputElement.value });
                   }
                 }}
               />
@@ -1266,7 +1262,6 @@ export const SearchBar = component$(() => {
           </Combobox>
         </div>
       </div>
-
       <div q:slot="codeExample">
         <Slot />
       </div>

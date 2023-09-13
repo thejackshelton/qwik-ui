@@ -34,6 +34,7 @@ export type ComboboxProps<O extends Option = Option> = {
   filter$?: QRL<
     (labelInput: string, options: ResolvedOption<O>[]) => ResolvedOption<O>[]
   >;
+  disableFilter?: boolean;
 
   // option settings
   optionValueKey?: string;
@@ -63,6 +64,7 @@ export const Combobox = component$(
       optionLabelKey = 'label',
       optionDisabledKey = 'disabled',
       filter$,
+      disableFilter,
       ...rest
     } = props;
 
@@ -99,28 +101,31 @@ export const Combobox = component$(
 
     useTask$(async function filterAPITask({ track }) {
       const opts = track(() => resolvedSig.value);
-      const inputValue = track(() => inputValueSig.value);
-      let filterFunction: QrlType<ComboboxProps<O>['filter$']> | undefined = await track(
-        () => filter$,
-      )?.resolve();
+      if (!disableFilter) {
+        const inputValue = track(() => inputValueSig.value);
+        let filterFunction: QrlType<ComboboxProps<O>['filter$']> | undefined =
+          await track(() => filter$)?.resolve();
 
-      if (!filterFunction) {
-        filterFunction = ((value: string, options: ResolvedOption[]) => {
-          if (!options) return [];
-          if (!value) return options;
-          const lcValue = value.toLowerCase();
-          return options.filter((option) => {
-            let { lcLabel } = option;
-            if (!lcLabel) {
-              lcLabel = option.label.toLowerCase();
-              option.lcLabel = lcLabel;
-            }
-            return lcLabel.includes(lcValue);
-          });
-        }) as QrlType<ComboboxProps<O>['filter$']>;
+        if (!filterFunction) {
+          filterFunction = ((value: string, options: ResolvedOption[]) => {
+            if (!options) return [];
+            if (!value) return options;
+            const lcValue = value.toLowerCase();
+            return options.filter((option) => {
+              let { lcLabel } = option;
+              if (!lcLabel) {
+                lcLabel = option.label.toLowerCase();
+                option.lcLabel = lcLabel;
+              }
+              return lcLabel.includes(lcValue);
+            });
+          }) as QrlType<ComboboxProps<O>['filter$']>;
+        }
+
+        filteredOptionsSig.value = filterFunction(inputValue, opts);
+      } else {
+        filteredOptionsSig.value = opts;
       }
-
-      filteredOptionsSig.value = filterFunction(inputValue, opts);
     });
 
     const labelRef = useSignal<HTMLLabelElement>();
