@@ -1,5 +1,5 @@
 import { component$ } from '@builder.io/qwik';
-import { Popover, PopoverProps } from './popover';
+import { Popover, PopoverProps } from './old-popover';
 // import { PopoverContent } from './popover-content';
 
 const PopoverComponent = component$((props: PopoverProps) => {

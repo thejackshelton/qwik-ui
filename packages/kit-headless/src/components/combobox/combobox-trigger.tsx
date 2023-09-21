@@ -28,7 +28,7 @@ export const ComboboxTrigger = component$((props: ComboboxTriggerProps) => {
         aria-controls={listboxId}
         aria-expanded={context.isListboxOpenSig.value}
         aria-label="Show suggestions"
-        popovertarget={popoverId}
+        popovertarget={props.popovertarget || popoverId}
       >
         <Slot />
       </button>

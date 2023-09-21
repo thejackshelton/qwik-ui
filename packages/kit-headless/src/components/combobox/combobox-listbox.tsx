@@ -45,7 +45,7 @@ export const ComboboxListbox = component$(
     const popoverId = `${context.localId}-popover`;
 
     return (
-      <Popover id={popoverId} anchorRef={context.inputRef} gutter={8}>
+      <Popover id={popoverId}>
         <ul
           {...props}
           id={listboxId}

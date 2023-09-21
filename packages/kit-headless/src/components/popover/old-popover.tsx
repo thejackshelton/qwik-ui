@@ -1,13 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import {
   type QwikIntrinsicElements,
-  Slot,
   component$,
   useSignal,
   useVisibleTask$,
   Signal,
   useStylesScoped$,
+  useOn,
+  $,
+  useTask$,
+  Slot,
 } from '@builder.io/qwik';
 import {
   ReferenceElement,
@@ -19,8 +20,16 @@ import {
   autoPlacement as _autoPlacement,
   hide as _hide,
 } from '@floating-ui/dom';
-// import '@oddbird/popover-polyfill/dist/popover.css';
-import { isBrowser } from '@builder.io/qwik/build';
+import { isServer, isBrowser } from '@builder.io/qwik/build';
+
+declare global {
+  interface Document {
+    __NEEDS_POPOVER__?: true;
+  }
+  interface HTMLDivElement {
+    popover?: 'manual' | 'auto' | true;
+  }
+}
 
 export type PopoverProps = {
   anchorRef?: Signal<HTMLElement | undefined>;
@@ -93,6 +102,7 @@ export const Popover = component$(
   }: PopoverProps) => {
     const base = useSignal<HTMLElement>();
     const popoverRef = useSignal<HTMLElement>();
+    const popped = useSignal(false);
 
     useStylesScoped$(`
       [data-child] {
@@ -117,8 +127,6 @@ export const Popover = component$(
           autoPlacement && _autoPlacement(),
         ];
 
-        console.log(getPopoverParent(popoverRef.value!));
-
         computePosition(
           anchorRef?.value as ReferenceElement,
           getPopoverParent(popoverRef.value!),
@@ -130,8 +138,6 @@ export const Popover = component$(
           if (!popoverRef.value) return;
 
           const { x, y } = resolvedData;
-
-          console.log(getPopoverParent(popoverRef.value));
 
           const popoverParent = getPopoverParent(popoverRef.value);
 
@@ -159,44 +165,64 @@ export const Popover = component$(
       cleanup(cleanupFunc);
     });
 
-    useVisibleTask$(async ({ cleanup }) => {
-      if (isSupported) return;
-      if (!moduleScope.imported) {
-        await import('@oddbird/popover-polyfill');
-        const css = (await import('@oddbird/popover-polyfill/dist/popover.css?inline'))
-          .default;
+    useOn(
+      'qvisible',
+      $(async () => {
+        const isSupported =
+          typeof HTMLElement !== 'undefined' &&
+          typeof HTMLElement.prototype === 'object' &&
+          'popover' in HTMLElement.prototype;
+        console.log('POLYFILL:', !isSupported);
+        if (isSupported) return;
+        document.__NEEDS_POPOVER__ = true;
+        if (document.querySelector('style[data-qwik-ui-popover-polyfill]')) return;
+        const [{ default: css }] = await Promise.all([
+          import('@oddbird/popover-polyfill/css?inline'),
+          import('@oddbird/popover-polyfill'),
+        ]);
         const styleNode = document.createElement('style');
+        styleNode.setAttribute('data-qwik-ui-popover-polyfill', '');
         styleNode.textContent = css;
         document.head.appendChild(styleNode);
-        moduleScope.imported = true;
-      }
-      cleanup(() => {
-        base.value?.appendChild(moduleScope.containerDiv as Node);
-      });
-    });
+      }),
+    );
 
     type ToggleEvent = {
       newState: string;
     };
 
+    useTask$(({ track }) => {
+      const popState = track(() => popped.value);
+      if (isServer || !popState) return;
+      return () => base.value?.appendChild(popoverRef.value as Node);
+    });
+
     return (
-      <div ref={base}>
+      <div aria-hidden={true} ref={base}>
         <div
           {...props}
           onToggle$={(e: ToggleEvent) => {
-            if (isSupported || !popoverRef.value) {
+            if (!document.__NEEDS_POPOVER__) {
               return;
             }
-            // We need to have a place to put the popover which doesn't impact layout
-            const floatingParent = getPortalParent();
+
+            console.log(`TOGGLE!`);
             if (e.newState === 'open') {
-              floatingParent.appendChild(popoverRef.value);
+              const containerDiv: HTMLDivElement | null = document.querySelector(
+                'div[data-qwik-ui-popover-polyfill]',
+              );
+              if (!containerDiv) {
+                containerDiv.style.position = 'absolute';
+                document.body.appendChild(containerDiv!);
+              }
+              containerDiv.appendChild(popoverRef.value!);
+              popped.value = true;
             } else {
-              base.value?.appendChild(popoverRef.value);
+              base.value!.appendChild(popoverRef.value!);
+              popped.value = false;
             }
           }}
           ref={popoverRef}
-          data-child
           popover
         >
           <Slot />

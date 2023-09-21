@@ -12,8 +12,8 @@ importers:
         specifier: 5.0.8
         version: 5.0.8
       '@oddbird/popover-polyfill':
-        specifier: 0.2.2
-        version: 0.2.2
+        specifier: 0.2.3
+        version: 0.2.3
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -6107,8 +6107,8 @@ packages:
       '@octokit/openapi-types': 12.11.0
     dev: true
 
-  /@oddbird/popover-polyfill@0.2.2:
-    resolution: {integrity: sha512-ko7x+PDZA9bHwA6hSfxjL1IhBP91JukfZq/NAe85u9rT0akFn9RKvSXymX/mS7S2mfNjE+Zw9JdLUPGvPabQAA==}
+  /@oddbird/popover-polyfill@0.2.3:
+    resolution: {integrity: sha512-XDK+V/gUeE4NEsWp79eVzhlK3wuVcRDJuaas63qo0IJLJpyOLHqycJLFYvuq8kebgT1nl87P3sbSb5ZN6Vyf5g==}
     dev: false
 
   /@pandacss/astro@0.4.0(astro@2.10.12)(jsdom@22.1.0)(ts-node@10.9.1)(typescript@5.2.2):
