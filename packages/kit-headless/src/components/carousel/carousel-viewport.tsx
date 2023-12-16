@@ -119,6 +119,15 @@ export const CarouselView = component$((props: CarouselViewportProps) => {
       context.transitionDurationSig.value = 0;
 
       const deltaX = e.clientX - context.initialX.value;
+      const direction = deltaX > 0 ? 1 : -1; // 1 for right and -1 for left
+
+      if (
+        context.currentIndexSig.value === context.numSlidesSig.value - 1 &&
+        direction === -1
+      ) {
+        return;
+        // we can add some snap back logic here (if it's the last slide)
+      }
 
       // const containerWidth = context.containerRef.value.scrollWidth;
       const containerLeftOffset = context.initialTransformX.value + deltaX;
