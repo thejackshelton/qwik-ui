@@ -129,6 +129,7 @@ export const PopoverImpl = component$<PopoverImplProps>((props) => {
       ]}
       // This gets called when the polyfill loads and we need to pop out
       document:onPopPolyLoad$={() => {
+        console.log('test');
         if (hasRenderedOnClientSig.value === 0) {
           // Force re-render and wait for teleport signal
           hasRenderedOnClientSig.value = 1;

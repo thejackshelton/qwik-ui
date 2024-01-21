@@ -171,7 +171,7 @@ export const Combobox = component$(
     useContextProvider(ComboboxContextId as ContextId<ComboboxContext<O>>, context);
 
     return (
-      <div {...rest}>
+      <div role="combobox" {...rest}>
         <Slot />
       </div>
     );
