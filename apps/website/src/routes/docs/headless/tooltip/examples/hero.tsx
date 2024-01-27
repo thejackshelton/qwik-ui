@@ -5,7 +5,7 @@ export default component$(() => {
   return (
     <Tooltip>
       <TooltipTrigger popovertarget="hero-tooltip">Trigger!</TooltipTrigger>
-      <TooltipPopover class="m-0 bg-blue-600" id="hero-tooltip">
+      <TooltipPopover placement="bottom" class="m-0 bg-blue-600" id="hero-tooltip">
         Popover!
       </TooltipPopover>
     </Tooltip>
