@@ -29,7 +29,7 @@ declare global {
 }
 
 export type FloatingProps = PropsOf<'div'> & {
-  id?: string;
+  id: string;
   anchorRef?: Signal<HTMLElement | undefined>;
   popoverRef?: Signal<HTMLElement | undefined>;
   placement?:

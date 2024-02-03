@@ -9,9 +9,7 @@ export type PopoverProps = PopoverImplProps & { floating?: boolean } & FloatingP
 
 /* This component determines whether the popover needs floating behavior, a common example where it doesn't, would be a toast. */
 export const Popover = component$<PopoverProps>((props) => {
-  const { floating = true } = props;
-
-  if (props.floating === true) {
+  if (props.floating) {
     const { ref, anchorRef, ...rest } = props;
     if (!anchorRef) {
       throw new Error(
@@ -27,7 +25,7 @@ export const Popover = component$<PopoverProps>((props) => {
   }
 
   return (
-    <PopoverImpl floating={floating} {...props}>
+    <PopoverImpl {...props}>
       <Slot />
     </PopoverImpl>
   );

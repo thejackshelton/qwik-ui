@@ -6,30 +6,20 @@ import {
   useSignal,
   $,
   PropsOf,
-  useContextProvider,
-  useId,
 } from '@builder.io/qwik';
 import { isBrowser } from '@builder.io/qwik/build';
-import { PopoverContext, popoverContextId } from './popover-context';
 
 type PopoverTriggerProps = {
-  popovertarget?: string;
+  popovertarget: string;
   disableClickInitPopover?: boolean;
 } & PropsOf<'button'>;
 
-export function usePopover() {
-  const popoverRef = useSignal<HTMLElement>();
-  const localId = useId();
-
-  const context: PopoverContext = {
-    popoverRef,
-    localId,
-  };
-
+export function usePopover(popovertarget: string) {
   const hasPolyfillLoadedSig = useSignal<boolean>(false);
   const isSupportedSig = useSignal<boolean>(false);
 
   const didInteractSig = useSignal<boolean>(false);
+  const popoverSig = useSignal<HTMLElement | null>(null);
 
   const loadPolyfill$ = $(async () => {
     await import('@oddbird/popover-polyfill');
@@ -57,13 +47,18 @@ export function usePopover() {
 
     if (!isBrowser) return;
 
+    // get popover
+    if (!popoverSig.value) {
+      popoverSig.value = document.getElementById(popovertarget);
+    }
+
     // so it only runs once on click for supported browsers
     if (isSupportedSig.value) {
-      if (!popoverRef.value) return;
+      if (!popoverSig.value) return;
 
-      if (popoverRef.value && popoverRef.value.hasAttribute('popover')) {
+      if (popoverSig.value && popoverSig.value.hasAttribute('popover')) {
         /* opens manual on any event */
-        popoverRef.value.showPopover();
+        popoverSig.value.showPopover();
       }
     }
   });
@@ -74,13 +69,13 @@ export function usePopover() {
     $(() => {
       if (!didInteractSig.value) return;
 
-      if (!popoverRef.value) return;
+      if (!popoverSig.value) return;
 
       // calls code in here twice for some reason, we think it's because of the client re-render, but it still works
 
       // so it only runs once on first click
-      if (!popoverRef.value.classList.contains(':popover-open')) {
-        popoverRef.value.showPopover();
+      if (!popoverSig.value.classList.contains(':popover-open')) {
+        popoverSig.value.showPopover();
       }
     }),
   );
@@ -89,38 +84,34 @@ export function usePopover() {
     if (!didInteractSig.value) {
       await initPopover$();
     }
-    popoverRef.value?.showPopover();
+    popoverSig.value?.showPopover();
   });
 
   const togglePopover = $(async () => {
     if (!didInteractSig.value) {
       await initPopover$();
     }
-    popoverRef.value?.togglePopover();
+    popoverSig.value?.togglePopover();
   });
 
   const hidePopover = $(async () => {
     if (!didInteractSig.value) {
       await initPopover$();
     }
-    popoverRef.value?.hidePopover();
+    popoverSig.value?.hidePopover();
   });
 
-  return { showPopover, togglePopover, hidePopover, initPopover$, context };
+  return { showPopover, togglePopover, hidePopover, initPopover$ };
 }
 
 export const PopoverTrigger = component$<PopoverTriggerProps>(
-  ({ disableClickInitPopover = false, ...rest }: PopoverTriggerProps) => {
-    const { initPopover$, context } = usePopover();
-    const triggerId = `${context.localId}-trigger`;
-
-    useContextProvider(popoverContextId, context);
+  ({ popovertarget, disableClickInitPopover = false, ...rest }: PopoverTriggerProps) => {
+    const { initPopover$ } = usePopover(popovertarget);
 
     return (
       <button
         {...rest}
-        id={triggerId}
-        popovertarget={`${context.localId}-popover`}
+        popovertarget={popovertarget}
         onClick$={[
           rest.onClick$,
           !disableClickInitPopover

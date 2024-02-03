@@ -14,10 +14,9 @@ import {
 import { isServer } from '@builder.io/qwik/build';
 import popoverStyles from './popover.css?inline';
 import { supportShowAnimation, supportClosingAnimation } from './utils';
-import { popoverContextId } from './popover-context';
 
 export type PopoverImplProps = {
-  id?: string;
+  id: string;
   popover?: 'manual' | 'auto';
   class?: ClassList;
   ref?: Signal<HTMLElement | undefined>;
@@ -47,12 +46,10 @@ export const EnsuredContext = component$(() => {
 });
 
 export const PopoverImpl = component$<PopoverImplProps>((props) => {
-  const context = useContext(popoverContextId);
-  const popoverId = `${context.localId}-popover`;
-
   // We must inject some minimal hiding CSS while the polyfill loads, and the preset class
   useStyles$(popoverStyles);
 
+  const popoverRef = useSignal<HTMLElement | undefined>(undefined);
   const isPolyfillSig = useSignal<boolean>(false);
 
   /** have we rendered on the client yet? 0: no, 1: force, 2: yes */
@@ -82,31 +79,30 @@ export const PopoverImpl = component$<PopoverImplProps>((props) => {
       document.body.appendChild(polyfillContainer);
     }
 
-    if (context.popoverRef.value) {
-      polyfillContainer.appendChild(context.popoverRef.value);
+    if (popoverRef.value) {
+      polyfillContainer.appendChild(popoverRef.value);
 
       document.dispatchEvent(new CustomEvent('showpopover'));
 
-      cleanup(() => context.popoverRef.value);
+      cleanup(() => popoverRef.value);
     }
   });
 
   return (
     <div
       {...props}
-      id={popoverId}
       popover={props.manual || props.popover === 'manual' ? 'manual' : 'auto'}
-      ref={context.popoverRef}
+      ref={popoverRef}
       onBeforeToggle$={[
         $((e: ToggleEvent) => {
-          if (!context.popoverRef.value) return;
+          if (!popoverRef.value) return;
 
-          if (e.newState === 'open' && context.popoverRef.value) {
-            supportShowAnimation(context.popoverRef.value, isPolyfillSig.value);
+          if (e.newState === 'open' && popoverRef.value) {
+            supportShowAnimation(popoverRef.value, isPolyfillSig.value);
           }
 
           if (e.newState === 'closed') {
-            supportClosingAnimation(context.popoverRef.value);
+            supportClosingAnimation(popoverRef.value);
           }
         }),
         // @ts-expect-error bad types
@@ -115,17 +111,17 @@ export const PopoverImpl = component$<PopoverImplProps>((props) => {
       onToggle$={[
         $(() => {
           if (props.ref) {
-            props.ref.value = context.popoverRef.value;
+            props.ref.value = popoverRef.value;
           }
 
-          if (!context.popoverRef.value) return;
+          if (!popoverRef.value) return;
 
           // move opened polyfill popovers are always above the other
           if (
-            context.popoverRef.value.classList.contains(':popover-open') &&
-            context.popoverRef.value.parentElement
+            popoverRef.value.classList.contains(':popover-open') &&
+            popoverRef.value.parentElement
           ) {
-            context.popoverRef.value.parentElement.appendChild(context.popoverRef.value);
+            popoverRef.value.parentElement.appendChild(popoverRef.value);
           }
         }),
         // @ts-expect-error bad types

@@ -18,7 +18,6 @@ export const TooltipPopover = component$(
         id={popoverId}
         placement={placement}
         manual
-        class={['listbox', props.class]}
       >
         <Slot />
       </Popover>
