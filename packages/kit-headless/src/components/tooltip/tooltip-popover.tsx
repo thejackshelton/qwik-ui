@@ -1,8 +1,13 @@
-import { component$, PropsOf, Slot, useContext } from '@builder.io/qwik';
-import { Popover, PopoverProps } from '@qwik-ui/headless';
+import { component$, type PropsOf, Slot, useContext } from '@builder.io/qwik';
+import { Popover, type PopoverProps } from '@qwik-ui/headless';
 import { tooltipContextId } from './tooltip-context';
 
-export type TooltipPopoverProps = PropsOf<'div'> & PopoverProps;
+type RawTooltipPopoverProps = PropsOf<'div'> & PopoverProps;
+
+export type TooltipPopoverProps = Omit<
+  RawTooltipPopoverProps,
+  'id' | 'ref' | 'anchorRef'
+>;
 
 export const TooltipPopover = component$(
   ({ placement = 'top', ...props }: TooltipPopoverProps) => {
@@ -14,7 +19,7 @@ export const TooltipPopover = component$(
         {...props}
         ref={context.popoverRef}
         anchorRef={context.triggerRef}
-        floating={true}
+        floating
         id={popoverId}
         placement={placement}
         manual

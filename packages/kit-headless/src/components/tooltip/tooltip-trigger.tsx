@@ -1,8 +1,8 @@
-import { component$, PropsOf, Slot, useContext } from '@builder.io/qwik';
+import { component$, type PropsOf, Slot, useContext } from '@builder.io/qwik';
 import { tooltipContextId } from './tooltip-context';
 import { PopoverTrigger, usePopover } from '../popover';
 
-export type TooltipTriggerProps = PropsOf<'button'>;
+export type TooltipTriggerProps = Omit<PropsOf<'button'>, 'popovertarget' | 'id' | 'ref'>;
 
 export const TooltipTrigger = component$((props: TooltipTriggerProps) => {
   const context = useContext(tooltipContextId);
@@ -12,13 +12,13 @@ export const TooltipTrigger = component$((props: TooltipTriggerProps) => {
 
   return (
     <PopoverTrigger
+      {...props}
       disableClickInitPopover
       popovertarget={popoverTarget}
       ref={context.triggerRef}
-      onPointerEnter$={[showPopover]}
-      onPointerLeave$={[hidePopover]}
+      onPointerEnter$={[showPopover, props.onPointerEnter$]}
+      onPointerLeave$={[hidePopover, props.onPointerLeave$]}
       id={triggerId}
-      {...props}
     >
       <Slot />
     </PopoverTrigger>

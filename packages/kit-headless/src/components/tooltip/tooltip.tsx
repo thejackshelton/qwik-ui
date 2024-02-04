@@ -1,6 +1,6 @@
 import {
   component$,
-  PropsOf,
+  type PropsOf,
   Slot,
   useContextProvider,
   useId,
@@ -8,7 +8,7 @@ import {
 } from '@builder.io/qwik';
 import { tooltipContextId } from './tooltip-context';
 
-export type TooltipProps = PropsOf<'div'>;
+export type TooltipProps = Omit<PropsOf<'div'>, 'id' | 'role'>;
 
 export const Tooltip = component$((props: TooltipProps) => {
   const localId = useId();
