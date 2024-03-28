@@ -28,7 +28,9 @@ export const SelectTrigger = component$<SelectTriggerProps>((props) => {
 
   // Both the space and enter keys run with handleClick$
   const handleClick$ = $(() => {
+    console.log('ON CLICK');
     if (isFocusedInSig.value) {
+      console.log('LOGIC EXECUTED');
       context.isListboxOpenSig.value = !context.isListboxOpenSig.value;
     }
   });
@@ -170,8 +172,14 @@ export const SelectTrigger = component$<SelectTriggerProps>((props) => {
       onKeyDown$={[handleKeyDownSync$, handleKeyDown$, props.onKeyDown$]}
       data-open={context.isListboxOpenSig.value ? '' : undefined}
       data-closed={!context.isListboxOpenSig.value ? '' : undefined}
-      onFocusIn$={() => (isFocusedInSig.value = true)}
-      onFocusOut$={() => (isFocusedInSig.value = false)}
+      onFocusIn$={() => {
+        console.log('FOCUS IN');
+        isFocusedInSig.value = true;
+      }}
+      onFocusOut$={() => {
+        console.log('FOCUS OUT');
+        isFocusedInSig.value = false;
+      }}
       aria-expanded={context.isListboxOpenSig.value}
       preventdefault:blur
     >
