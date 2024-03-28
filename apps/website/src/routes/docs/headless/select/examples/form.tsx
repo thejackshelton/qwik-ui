@@ -15,7 +15,7 @@ export default component$(() => {
 
   return (
     <form preventdefault:submit>
-      <Select required class="select" aria-label="hero">
+      <Select class="select" aria-label="hero">
         <SelectTrigger class="select-trigger">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
@@ -29,7 +29,7 @@ export default component$(() => {
       </Select>
       <label style={{ display: 'flex', flexDirection: 'column' }}>
         Your favorite cat name
-        <input />
+        <input type="text" />
       </label>
       <button type="submit">Submit my form!</button>
     </form>

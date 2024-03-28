@@ -1,4 +1,12 @@
-import { $, Slot, component$, sync$, useContext, type PropsOf } from '@builder.io/qwik';
+import {
+  $,
+  Slot,
+  component$,
+  sync$,
+  useContext,
+  type PropsOf,
+  useSignal,
+} from '@builder.io/qwik';
 import SelectContextId from './select-context';
 import { useTypeahead } from './use-select';
 import { getNextEnabledOptionIndex, getPrevEnabledOptionIndex } from './utils';
@@ -8,12 +16,21 @@ export const SelectTrigger = component$<SelectTriggerProps>((props) => {
   const context = useContext(SelectContextId);
   const openKeys = ['ArrowUp', 'ArrowDown'];
   const closedKeys = [`Escape`];
+  const isFocusedInSig = useSignal<boolean>(false);
 
   const { typeahead$ } = useTypeahead();
 
+  // useTask$(({ track }) => {
+  //   track(() => isFocusedInSig.value);
+
+  //   console.log('isFocusedIn: ', isFocusedInSig.value);
+  // });
+
   // Both the space and enter keys run with handleClick$
   const handleClick$ = $(() => {
-    context.isListboxOpenSig.value = !context.isListboxOpenSig.value;
+    if (isFocusedInSig.value) {
+      context.isListboxOpenSig.value = !context.isListboxOpenSig.value;
+    }
   });
 
   const handleKeyDownSync$ = sync$((e: KeyboardEvent) => {
@@ -153,6 +170,8 @@ export const SelectTrigger = component$<SelectTriggerProps>((props) => {
       onKeyDown$={[handleKeyDownSync$, handleKeyDown$, props.onKeyDown$]}
       data-open={context.isListboxOpenSig.value ? '' : undefined}
       data-closed={!context.isListboxOpenSig.value ? '' : undefined}
+      onFocusIn$={() => (isFocusedInSig.value = true)}
+      onFocusOut$={() => (isFocusedInSig.value = false)}
       aria-expanded={context.isListboxOpenSig.value}
       preventdefault:blur
     >

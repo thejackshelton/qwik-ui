@@ -50,6 +50,7 @@ export const HiddenSelect = component$(
               disabled={disabled}
               required={required}
               name={name}
+              preventdefault:invalid
             >
               <option />
               {options?.map((opt: Opt) => (

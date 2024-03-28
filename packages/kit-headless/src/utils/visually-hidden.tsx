@@ -4,7 +4,6 @@ export const VisuallyHidden = component$(() => {
   /* Visually hide text while keeping it accessible */
   /* Source: https://www.scottohara.me/blog/2017/04/14/inclusively-hidden.html */
   useStylesScoped$(`
-  
   .visually-hidden:not(:focus):not(:active) {
       /* shrink to a 1px square */
       width: 1px;

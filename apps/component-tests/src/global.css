@@ -2,7 +2,12 @@
 @tailwind base;
 @tailwind utilities;
 
+:root {
+  --select-width: 12rem;
+}
+
 @layer base {
+  /* please don't move the css vars into a light class, it breaks all the light styles */
   :root {
     --border-width: 0px;
     --stroke-width: 0px;
@@ -14,9 +19,6 @@
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
     --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 1);
     --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.01);
-  }
-
-  .light {
     --background: 0 0% 100%;
     --foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
