@@ -1,3 +1,7 @@
+// this is a comment to test ssh
+const random = Math.random();
+random;
+
 import type { FunctionComponent, JSXNode } from '@builder.io/qwik';
 import { AccordionContent as InternalAccordionContent } from './accordion-content';
 import {
