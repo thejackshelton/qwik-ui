@@ -1,3 +1,5 @@
+// git commit -m "Signing my first commit with SSH"
+
 import type { FunctionComponent, JSXNode } from '@builder.io/qwik';
 import { AccordionContent as InternalAccordionContent } from './accordion-content';
 import {
