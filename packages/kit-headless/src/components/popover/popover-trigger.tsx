@@ -22,11 +22,18 @@ export function usePopover(popovertarget: string) {
   const popoverSig = useSignal<HTMLElement | null>(null);
 
   const loadPolyfill$ = $(async () => {
+    console.log('LOAD POLYFILL');
     await import('@oddbird/popover-polyfill');
     document.dispatchEvent(new CustomEvent('poppolyload'));
   });
 
   const initPopover$ = $(async () => {
+    if (didInteractSig.value) {
+      return;
+    }
+
+    console.log('INIT POPOVER');
+
     /* needs to run before poly load */
     const isSupported =
       typeof HTMLElement !== 'undefined' &&
@@ -49,6 +56,7 @@ export function usePopover(popovertarget: string) {
 
     // get popover
     if (!popoverSig.value) {
+      console.log('GET POPOVER W/ GETELEMENTBYID');
       popoverSig.value = document.getElementById(popovertarget);
     }
 
@@ -57,6 +65,7 @@ export function usePopover(popovertarget: string) {
       if (!popoverSig.value) return;
 
       if (popoverSig.value && popoverSig.value.hasAttribute('popover')) {
+        console.log('PROGRAMMATICALLY SHOW POPOVER ONE TIME ON FIRST CLICK');
         /* opens manual on any event */
         popoverSig.value.showPopover();
       }
@@ -84,6 +93,7 @@ export function usePopover(popovertarget: string) {
     if (!didInteractSig.value) {
       await initPopover$();
     }
+    console.log('SHOW POPOVER');
     popoverSig.value?.showPopover();
   });
 
@@ -98,7 +108,9 @@ export function usePopover(popovertarget: string) {
     if (!didInteractSig.value) {
       await initPopover$();
     }
+    console.log('HIDE POPOVER');
     popoverSig.value?.hidePopover();
+    console.log('AFTER HIDE POPOVER');
   });
 
   return { showPopover, togglePopover, hidePopover, initPopover$ };
