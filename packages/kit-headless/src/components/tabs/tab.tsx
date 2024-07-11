@@ -22,23 +22,21 @@ export type TabProps = PropsOf<'button'> & {
 };
 
 export const HTab = component$<TabProps>(({ selectedClassName, tabId, ...props }) => {
-  const contextService = useContext(tabsContextId);
-
-  const elementRefSig = useSignal<HTMLElement | undefined>();
-
-  const fullTabElementId = contextService.tabsPrefix + TAB_ID_PREFIX + tabId!;
-  const fullPanelElementId = contextService.tabsPrefix + TAB_PANEL_ID_PREFIX + tabId!;
+  const context = useContext(tabsContextId);
+  const tabRef = useSignal<HTMLElement | undefined>();
+  const fullTabElementId = context.tabsPrefix + TAB_ID_PREFIX + tabId!;
+  const fullPanelElementId = context.tabsPrefix + TAB_PANEL_ID_PREFIX + tabId!;
 
   const selectedClassNameSig = useComputed$(() => {
-    return selectedClassName || contextService.selectedClassName;
+    return selectedClassName || context.selectedClassName;
   });
 
   const isSelectedSig = useComputed$(() => {
-    return contextService.selectedTabIdSig.value === tabId;
+    return context.selectedTabIdSig.value === tabId;
   });
 
   const selectIfAutomatic$ = $(() => {
-    contextService.selectIfAutomatic$(tabId!);
+    context.selectIfAutomatic$(tabId!);
   });
 
   const classNamesSig = useComputed$(() => [
@@ -53,7 +51,7 @@ export const HTab = component$<TabProps>(({ selectedClassName, tabId, ...props }
       role="tab"
       id={fullTabElementId}
       aria-controls={fullPanelElementId}
-      ref={elementRefSig}
+      ref={tabRef}
       aria-disabled={props.disabled}
       data-state={isSelectedSig.value ? 'selected' : 'unselected'}
       onFocus$={[selectIfAutomatic$, props.onFocus$]}
@@ -61,7 +59,7 @@ export const HTab = component$<TabProps>(({ selectedClassName, tabId, ...props }
       aria-selected={isSelectedSig.value}
       tabIndex={isSelectedSig.value ? 0 : -1}
       class={[props.class, classNamesSig.value]}
-      onClick$={[$(() => contextService.selectTab$(tabId!)), props.onClick$]}
+      onClick$={[$(() => context.selectTab$(tabId!)), props.onClick$]}
       onKeyDown$={[
         /* KeyCode cannot be used here. */
         sync$((e: KeyboardEvent): void => {
@@ -80,7 +78,7 @@ export const HTab = component$<TabProps>(({ selectedClassName, tabId, ...props }
             e.preventDefault();
           }
         }),
-        $((e) => contextService.onTabKeyDown$(e.key as KeyCode, tabId!)),
+        $((e) => context.onTabKeyDown$(e.key as KeyCode, tabId!)),
         props.onKeyDown$,
       ]}
     >

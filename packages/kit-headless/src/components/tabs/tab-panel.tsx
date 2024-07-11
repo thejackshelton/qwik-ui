@@ -20,13 +20,13 @@ export const TAB_PANEL_ID_PREFIX = '_tabpanel_';
 export const HTabPanel = component$(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ({ label, _tabId, _extraClass, ...props }: TabPanelProps) => {
-    const contextService = useContext(tabsContextId);
+    const context = useContext(tabsContextId);
 
-    const fullPanelElementId = contextService.tabsPrefix + TAB_PANEL_ID_PREFIX + _tabId!;
-    const fullTabElementId = contextService.tabsPrefix + TAB_ID_PREFIX + _tabId!;
+    const fullPanelElementId = context.tabsPrefix + TAB_PANEL_ID_PREFIX + _tabId!;
+    const fullTabElementId = context.tabsPrefix + TAB_ID_PREFIX + _tabId!;
 
     const isSelectedSig = useComputed$(() => {
-      return contextService.selectedTabIdSig.value === _tabId;
+      return context.selectedTabIdSig.value === _tabId;
     });
 
     return (
