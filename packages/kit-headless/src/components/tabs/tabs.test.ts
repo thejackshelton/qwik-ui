@@ -58,4 +58,87 @@ test.describe('Critical functionality', () => {
 
     await expect(page.getByRole('paragraph').last()).toHaveText('Selected Index: 1');
   });
+
+  test(`GIVEN a tab with a custom onClick$ handler
+        WHEN tab is clicked on
+        THEN the handler should be called`, async ({ page }) => {
+    const { driver: d } = await setup(page, 'on-click');
+
+    await expect(d.getVisiblePanel()).toContainText('Custom onClick was called: false');
+
+    await d.getTabAt(0).click();
+
+    await expect(d.getVisiblePanel()).toContainText('Custom onClick was called: true');
+  });
+
+  test(`GIVEN 4 tabs,
+        WHEN removing the last one dynamically
+        THEN only 3 should remain`, async ({ page }) => {
+    await setup(page, 'dynamic');
+
+    await expect(page.getByRole('tab')).toHaveCount(4);
+
+    await page.getByRole('button', { name: 'Remove Tab' }).click();
+
+    await expect(page.getByRole('tab')).toHaveCount(3);
+  });
+
+  test(`GIVEN 3 tabs,
+        WHEN selecting 3rd
+        AND removing 1st dynamically
+        AND clicking 2nd (now 1st)
+        THEN the correct tab should be displayed`, async ({ page }) => {
+    const { driver: d } = await setup(page, 'dynamic');
+
+    await d.getTabAt(2).click();
+
+    await expect(d.getVisiblePanel()).toContainText('Dynamic Tab 3 Panel');
+
+    await page.getByRole('textbox', { name: 'Index to remove:' }).fill('0');
+
+    await page.getByRole('button', { name: 'Remove Tab' }).click();
+
+    await d.getTabAt(0).click();
+
+    await expect(d.getVisiblePanel()).toContainText('Dynamic Tab 2 Panel');
+  });
+
+  test(`GIVEN 4 tabs
+        WHEN clicking on the last one and then removing it
+        THEN tab 3 should be shown`, async ({ page }) => {
+    const { driver: d } = await setup(page, 'dynamic');
+
+    await d.getTabAt(3).click();
+
+    await expect(d.getVisiblePanel()).toContainText('Dynamic Tab 4 Panel');
+
+    await page.getByRole('textbox', { name: 'Index to remove:' }).fill('3');
+
+    await page.getByRole('button', { name: 'Remove Tab' }).click();
+
+    await expect(d.getVisiblePanel()).toContainText('Dynamic Tab 3 Panel');
+  });
+
+  test(`GIVEN 4 tabs
+        WHEN clicking on the last one and then removing the 3rd
+        THEN tab 4 should be shown`, async ({ page }) => {
+    const { driver: d } = await setup(page, 'dynamic');
+
+    await d.getTabAt(3).click();
+
+    await expect(d.getVisiblePanel()).toContainText('Dynamic Tab 4 Panel');
+
+    await page.getByRole('textbox', { name: 'Index to remove:' }).fill('2');
+
+    await page.getByRole('button', { name: 'Remove Tab' }).click();
+
+    await expect(d.getVisiblePanel()).toContainText('Dynamic Tab 4 Panel');
+  });
+
+  test(`GIVEN 4 tabs
+        WHEN selecting the 3rd one and adding a tab at the second one
+        THEN the correct tab should be displayed`, async ({ page }) => {
+    page;
+    // TODO: maybe copy spec test from cypress?
+  });
 });
