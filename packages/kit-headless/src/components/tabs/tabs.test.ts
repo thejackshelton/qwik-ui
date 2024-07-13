@@ -139,6 +139,37 @@ test.describe('Critical functionality', () => {
         WHEN selecting the 3rd one and adding a tab at the second one
         THEN the correct tab should be displayed`, async ({ page }) => {
     page;
-    // TODO: maybe copy spec test from cypress?
+    // TODO: do this test. I noticed actual broken behavior when adding new tabs with the cypress test example. This specific case may work, but adding new tabs will select multiple tab panels.
+  });
+
+  test.describe('Manual Tab Ids', () => {
+    test(`GIVEN 2 tabs and tab ids are set on tabs
+          WHEN clicking on the second tab
+          THEN the second panel should be displayed 
+         and the selectTabId should match the second tab id`, async ({ page }) => {
+      const { driver: d } = await setup(page, 'selected-tab-id');
+
+      const tabIdElement = await page.getByRole('paragraph').last();
+
+      await expect(tabIdElement).toHaveText('Selected Tab Id: Maria');
+
+      await d.getTabAt(1).click();
+
+      await expect(d.getVisiblePanel()).toContainText('Carl');
+
+      await expect(tabIdElement).toHaveText('Selected Tab Id: Carl');
+    });
+  });
+
+  test.describe('Tabs inside of tabs', () => {
+    test(`GIVEN tabs inside of tabs
+          WHEN clicking on the root second tab
+          THEN it should show only the selected root panel`, async ({ page }) => {
+      const { driver: d } = await setup(page, 'tabs-inside-tabs');
+
+      await d.getTabAt(1).click();
+
+      await expect(d.getVisiblePanel()).toContainText('Root Panel 2');
+    });
   });
 });

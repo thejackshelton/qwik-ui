@@ -25,7 +25,7 @@ export default component$(() => {
             <p>Ida Henriette da Fonseca (July 27, 1802 - July 6, 1858) ...</p>
           </Tabs.Panel>
         </Tabs.Root>
-        <p class="mt-4 text-white">
+        <p class="mt-4">
           <strong>Selected Tab Id</strong>: {selectedTabIdSig.value}
         </p>
       </div>
