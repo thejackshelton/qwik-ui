@@ -30,5 +30,8 @@ export default function (opts: RenderToStreamOptions) {
         prefetchEvent: null,
       },
     },
+    qwikPrefetchServiceWorker: {
+      include: false,
+    },
   });
 }
