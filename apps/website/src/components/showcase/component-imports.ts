@@ -10,12 +10,3 @@ export const metaGlobComponents: Record<string, any> = import.meta.glob(
     import: 'default',
   },
 );
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const rawComponents: Record<string, any> = import.meta.glob(
-  '/src/routes/docs/**/**/examples/*.tsx',
-  {
-    query: '?raw',
-    import: 'default',
-  },
-);

@@ -2,7 +2,7 @@ import { Component, component$, useSignal, useTask$ } from '@builder.io/qwik';
 import { useLocation } from '@builder.io/qwik-city';
 import { Tabs } from '@qwik-ui/headless';
 import { Highlight } from '../highlight/highlight';
-import { metaGlobComponents, rawComponents } from './component-imports';
+import { metaGlobComponents } from './component-imports';
 
 type ShowcaseProps = {
   name?: string;
@@ -21,7 +21,6 @@ export const Showcase = component$<ShowcaseProps>(({ name, ...props }) => {
     try {
       // eslint-disable-next-line qwik/valid-lexical-scope
       MetaGlobComponentSig.value = await metaGlobComponents[componentPath](); // We need to call `await metaGlobComponents[componentPath]()` in development as it is `eager:false`
-      componentCodeSig.value = await rawComponents[componentPath]();
     } catch (e) {
       throw new Error(`Unable to load path ${componentPath}`);
     }
