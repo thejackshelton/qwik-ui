@@ -20,7 +20,7 @@
   "private": false,
   "scripts": {},
   "peerDependencies": {
-    "@builder.io/qwik": "https://pkg.pr.new/@builder.io/qwik@6854"
+    "@builder.io/qwik": "https://pkg.pr.new/@builder.io/qwik@036d4f0"
   },
   "devDependencies": {
     "@qwik-ui/headless": "^0.5.2",
