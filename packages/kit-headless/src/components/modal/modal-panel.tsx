@@ -33,7 +33,7 @@ export const HModalPanel = component$((props: PropsOf<'dialog'>) => {
     deactivateFocusTrap,
     showModal,
     trapFocus,
-    wasModalBackdropClicked,
+    wasModalBackdropPressed,
   } = useModal();
   const context = useContext(modalContextId);
 
@@ -73,7 +73,7 @@ export const HModalPanel = component$((props: PropsOf<'dialog'>) => {
     }
   });
 
-  const closeOnBackdropClick$ = $(async (e: MouseEvent) => {
+  const closeOnBackdropPress$ = $(async (e: MouseEvent) => {
     if (context.alert === true || context.closeOnBackdropClick === false) {
       return;
     }
@@ -83,7 +83,7 @@ export const HModalPanel = component$((props: PropsOf<'dialog'>) => {
       return;
     }
 
-    if (await wasModalBackdropClicked(panelRef.value, e)) {
+    if (await wasModalBackdropPressed(panelRef.value, e)) {
       context.showSig.value = false;
     }
   });
@@ -120,9 +120,9 @@ export const HModalPanel = component$((props: PropsOf<'dialog'>) => {
       role={context.alert === true ? 'alertdialog' : 'dialog'}
       ref={panelRef}
       onKeyDown$={[handleKeyDownSync$, handleKeyDown$, props.onKeyDown$]}
-      onClick$={async (e) => {
+      onPointerDown$={async (e) => {
         e.stopPropagation();
-        await closeOnBackdropClick$(e);
+        await closeOnBackdropPress$(e);
       }}
     >
       <Slot />

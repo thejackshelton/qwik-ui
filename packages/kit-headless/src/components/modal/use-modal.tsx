@@ -128,7 +128,7 @@ export function useModal() {
     deactivateFocusTrap,
     showModal,
     closeModal,
-    wasModalBackdropClicked,
+    wasModalBackdropPressed: wasModalBackdropClicked,
     supportClosingAnimation,
   };
 }
