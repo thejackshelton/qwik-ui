@@ -670,8 +670,8 @@ test.describe('Accessibility', () => {
   });
 });
 
-test.describe('Looping', () => {
-  test(`GIVEN a carousel with loop disabled
+test.describe('Rewinding', () => {
+  test(`GIVEN a carousel with rewind disabled
       WHEN navigating via keyboard to the last slide
       THEN the previous button should be focused after 2 seconds`, async ({ page }) => {
     const { driver: d } = await setup(page, 'hero');
@@ -689,7 +689,7 @@ test.describe('Looping', () => {
     await expect(d.getPrevButton()).toBeFocused();
   });
 
-  test(`GIVEN a carousel with loop disabled
+  test(`GIVEN a carousel with rewind disabled
       WHEN navigating via keyboard to the first slide
       THEN the next button should be focused after 2 seconds`, async ({ page }) => {
     const { driver: d } = await setup(page, 'hero');
@@ -701,7 +701,7 @@ test.describe('Looping', () => {
     await expect(d.getNextButton()).toBeFocused();
   });
 
-  test(`GIVEN a carousel with loop disabled
+  test(`GIVEN a carousel with rewind disabled
         WHEN on the last slide
         THEN the next button should be disabled`, async ({ page }) => {
     const { driver: d } = await setup(page, 'hero');
@@ -715,7 +715,7 @@ test.describe('Looping', () => {
     await expect(d.getNextButton()).toBeDisabled();
   });
 
-  test(`GIVEN a carousel with loop disabled
+  test(`GIVEN a carousel with rewind disabled
         WHEN on the first slide
         THEN the previous button should be disabled`, async ({ page }) => {
     const { driver: d } = await setup(page, 'hero');
@@ -724,10 +724,10 @@ test.describe('Looping', () => {
     await expect(d.getPrevButton()).toHaveAttribute('disabled'); //
   });
 
-  test(`GIVEN a carousel with loop enabled
+  test(`GIVEN a carousel with rewind enabled
         WHEN on the last slide and the next button is clicked
         THEN it should move to the first slide`, async ({ page }) => {
-    const { driver: d } = await setup(page, 'loop');
+    const { driver: d } = await setup(page, 'rewind');
 
     const totalSlides = await d.getTotalSlides();
     for (let i = 0; i < totalSlides - 1; i++) {
@@ -745,10 +745,10 @@ test.describe('Looping', () => {
     await expect(d.getSlideAt(0)).toHaveAttribute('data-active');
   });
 
-  test(`GIVEN a carousel with loop enabled
+  test(`GIVEN a carousel with rewind enabled
         WHEN on the first slide and the previous button is clicked
         THEN it should move to the last slide`, async ({ page }) => {
-    const { driver: d } = await setup(page, 'loop');
+    const { driver: d } = await setup(page, 'rewind');
     await expect(d.getSlideAt(0)).toHaveAttribute('data-active');
     await d.getPrevButton().click();
 
