@@ -36,7 +36,9 @@ export type PublicCarouselRootProps = Omit<PropsOf<'div'>, 'onChange$'> & {
   /** Pass the latest value change. Can use for stores, signal reads, initial values */
   selectedIndex?: number;
 
-  /** change the initial index of the carousel on render */
+  /**
+   * @deprecated Use selectedIndex instead
+   */
   startIndex?: number;
 
   /** function that runs whenever the selected index changes */
@@ -91,6 +93,7 @@ export const CarouselBase = component$((props: PublicCarouselRootProps) => {
     'bind:progress': givenProgressSig,
     _isTitle: isTitle,
     startIndex,
+    selectedIndex,
     onChange$,
     ...rest
   } = props;
@@ -108,7 +111,7 @@ export const CarouselBase = component$((props: PublicCarouselRootProps) => {
   const slideRefsArray = useSignal<Array<Signal>>([]);
   const bulletRefsArray = useSignal<Array<Signal>>([]);
   const startIndexSig = useComputed$(() => {
-    return startIndex ?? givenSlideIndexSig?.value ?? props.selectedIndex ?? 0;
+    return startIndex ?? givenSlideIndexSig?.value ?? selectedIndex ?? 0;
   });
   const currentIndexSig = useBoundSignal(
     givenSlideIndexSig ?? givenOldSlideIndexSig,
@@ -194,18 +197,20 @@ export const CarouselBase = component$((props: PublicCarouselRootProps) => {
   });
 
   useTask$(function handleValueUpdates({ track }) {
-    const updatedIndex = track(() => props.selectedIndex);
+    if (selectedIndex === undefined) return;
 
-    if (!updatedIndex) return;
+    track(() => selectedIndex);
 
-    currentIndexSig.value = updatedIndex;
+    currentIndexSig.value = selectedIndex;
   });
 
   useTask$(async function handleChange({ track }) {
+    if (!onChange$) return;
+
     track(() => currentIndexSig.value);
 
     if (!isInitialRenderSig.value) {
-      await onChange$?.(currentIndexSig.value);
+      await onChange$(currentIndexSig.value);
     }
 
     isInitialRenderSig.value = false;
