@@ -8,12 +8,13 @@ import {
   useComputed$,
   useId,
   useTask$,
+  QRL,
 } from '@builder.io/qwik';
 import { CarouselContext, carouselContextId } from './context';
 import { useBoundSignal } from '../../utils/bound-signal';
 import { useAutoplay } from './use-carousel';
 
-export type PublicCarouselRootProps = PropsOf<'div'> & {
+export type PublicCarouselRootProps = Omit<PropsOf<'div'>, 'onChange$'> & {
   /** The gap between slides */
   gap?: number;
 
@@ -32,8 +33,14 @@ export type PublicCarouselRootProps = PropsOf<'div'> & {
   /** Bind the selected index to a signal */
   'bind:selectedIndex'?: Signal<number>;
 
+  /** Pass the latest value change. Can use for stores, signal reads, initial values */
+  selectedIndex?: number;
+
   /** change the initial index of the carousel on render */
   startIndex?: number;
+
+  /** function that runs whenever the selected index changes */
+  onChange$?: QRL<(index: number) => void>;
 
   /**
    * @deprecated Use bind:selectedIndex instead
@@ -84,6 +91,7 @@ export const CarouselBase = component$((props: PublicCarouselRootProps) => {
     'bind:progress': givenProgressSig,
     _isTitle: isTitle,
     startIndex,
+    onChange$,
     ...rest
   } = props;
 
@@ -100,12 +108,13 @@ export const CarouselBase = component$((props: PublicCarouselRootProps) => {
   const slideRefsArray = useSignal<Array<Signal>>([]);
   const bulletRefsArray = useSignal<Array<Signal>>([]);
   const startIndexSig = useComputed$(() => {
-    return startIndex ?? givenSlideIndexSig?.value ?? 0;
+    return startIndex ?? givenSlideIndexSig?.value ?? props.selectedIndex ?? 0;
   });
   const currentIndexSig = useBoundSignal(
     givenSlideIndexSig ?? givenOldSlideIndexSig,
     startIndexSig.value,
   );
+
   const isScrollerSig = useSignal(false);
   const isAutoplaySig = useBoundSignal(givenAutoplaySig, false);
 
@@ -137,6 +146,7 @@ export const CarouselBase = component$((props: PublicCarouselRootProps) => {
     return props.orientation ?? 'horizontal';
   });
   const isMouseWheelSig = useComputed$(() => props.mousewheel ?? false);
+  const isInitialRenderSig = useSignal(true);
 
   const titleId = `${localId}-title`;
 
@@ -181,6 +191,24 @@ export const CarouselBase = component$((props: PublicCarouselRootProps) => {
     } else {
       progressSig.value = 0;
     }
+  });
+
+  useTask$(function handleValueUpdates({ track }) {
+    const updatedIndex = track(() => props.selectedIndex);
+
+    if (!updatedIndex) return;
+
+    currentIndexSig.value = updatedIndex;
+  });
+
+  useTask$(async function handleChange({ track }) {
+    track(() => currentIndexSig.value);
+
+    if (!isInitialRenderSig.value) {
+      await onChange$?.(currentIndexSig.value);
+    }
+
+    isInitialRenderSig.value = false;
   });
 
   return (

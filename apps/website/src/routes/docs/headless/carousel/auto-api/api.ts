@@ -53,9 +53,20 @@ export const api = {
               type: 'Signal<number>',
             },
             {
+              comment:
+                'Pass the latest value change. Can use for stores, signal reads, initial values',
+              prop: 'selectedIndex',
+              type: 'number',
+            },
+            {
               comment: 'change the initial index of the carousel on render',
               prop: 'startIndex',
               type: 'number',
+            },
+            {
+              comment: 'function that runs whenever the selected index changes',
+              prop: 'onChange$',
+              type: 'QRL<(index: number) => void>',
             },
             {
               comment:
