@@ -7,7 +7,6 @@ import {
   useSignal,
   useStyles$,
   useTask$,
-  type CorrectedToggleEvent,
   type PropsOf,
 } from '@qwik.dev/core';
 
@@ -127,7 +126,7 @@ export const HPopoverPanelImpl = component$((props: PropsOf<'div'>) => {
         props.onBeforeToggle$,
       ]}
       onToggle$={[
-        $((e: CorrectedToggleEvent) => {
+        $((e: ToggleEventInit) => {
           context.isOpenSig.value = e.newState === 'open';
 
           if (!context.panelRef?.value) return;
